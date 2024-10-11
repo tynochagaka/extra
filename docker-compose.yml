@@ -1,16 +1,28 @@
-version: "3.8"
+version: '3.8'
 
 services:
-    web:
-        build: ./flask_app
-        ports:
-            - "5000:5000"
-        environment:
-            - REDIS_URL=redis://redis:6379
-        depends_on:
-            - redis
+  web:
+    build: ./flask_app
+    ports:
+      - "5000:5000"
+    environment:
+      REDIS_URL: redis://redis:6379
+      DATABASE_URL: postgres://user:password@db:5432/mydatabase  # Add your DB URL here
+    depends_on:
+      - redis
+      - db  # Add dependency on the new PostgreSQL service
 
-    redis:
-        image: "redis:alpine"
-        ports:
-            - "6379:6379"
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+
+  db:  # Add PostgreSQL service
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: mydatabase  # Set your database name
+      POSTGRES_USER: user  # Set your database user
+      POSTGRES_PASSWORD: password  # Set your database password
+    ports:
+      - "5432:5432"  # Expose the PostgreSQL port
